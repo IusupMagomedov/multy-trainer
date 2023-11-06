@@ -18,8 +18,10 @@ import './App.css';
 function App() {
   const [multArr, setMultArr] = useState([]);
   const [timer, setTimer] = useState(50);
-  const [multiplicand, setMulplicand] = useState();
-  const [multiplier, setMultiplier] = useState()
+  const [multiplicand, setMulplicand] = useState(2);
+  const [multiplier, setMultiplier] = useState(2);
+  const [productValue, setProductValue ] = useState('');
+  const [arrId, setArrId] = useState(0);
 
   useEffect(() => {
     setTimeout(() => {
@@ -41,13 +43,40 @@ function App() {
       }  
     }
     setMultArr(arr);
-  })
+  }, [])
+
+
   useEffect(() => {
-    setMultiplier(2);
-    setMulplicand(2);
+    console.log("Mult array in multArr useEffect: ", multArr);
+    if(multArr[0]) {
+      setMultiplier(multArr[arrId].multiplier);
+      setMulplicand(multArr[arrId].multiplicand);
+    }
+    
   
-  }, [multArr])
+  }, [multArr, arrId])
   
+  const textFieldHandler = (event) => {
+    setProductValue(event.target.value);
+  }
+  
+  const keyHandler = ev => {
+    // console.log(`Pressed keyCode ${ev.key}`);
+    if (ev.key === 'Enter') {
+      const array = multArr;
+      if (productValue == multiplier * multiplicand) {
+        console.log("You've entered right value!");
+        console.log("Array in keyHandler: ", array);
+        console.log("arrId in keyHandler: ", arrId);
+        array[arrId].solved = true;
+      }
+      setMultArr(array);
+      setProductValue('');
+      setArrId(arrId + 1);
+
+    }
+    // console.log("Mult array in keyHandler: ", multArr);
+  }  
 
   return (
     <Box >
@@ -82,7 +111,15 @@ function App() {
           </Typography>
         </Grid>
         <Grid item xs={2.4}>
-          <TextField autoFocus={true} id="outlined-basic" label="Product" variant="outlined" />
+          <TextField 
+            value={productValue} 
+            onKeyPress={keyHandler} 
+            onChange={textFieldHandler} 
+            autoFocus={true} 
+            id="outlined-basic" 
+            label="Product" 
+            variant="outlined" 
+          />
         </Grid>
       </Grid>
     </Box>
