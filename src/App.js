@@ -6,6 +6,8 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import LinearProgress from '@mui/material/LinearProgress';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 
 
@@ -22,6 +24,7 @@ function App() {
   const [multiplier, setMultiplier] = useState(2);
   const [productValue, setProductValue ] = useState('');
   const [arrId, setArrId] = useState(0);
+  const [rightAnswer, setRightAnswer] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
@@ -69,10 +72,15 @@ function App() {
         console.log("Array in keyHandler: ", array);
         console.log("arrId in keyHandler: ", arrId);
         array[arrId].solved = true;
+        setArrId(arrId + 1);
+        setRightAnswer(true);
+
+      } else {
+        setRightAnswer(false);
       }
       setMultArr(array);
       setProductValue('');
-      setArrId(arrId + 1);
+      
 
     }
     // console.log("Mult array in keyHandler: ", multArr);
@@ -80,6 +88,7 @@ function App() {
 
   return (
     <Box >
+      
       <Grid container >
         <Grid item xs={12}>
           <Typography align='center' variant="h1" gutterBottom>
@@ -88,6 +97,20 @@ function App() {
         </Grid><Grid item xs={12}>
           <Typography align='center' variant="h1" gutterBottom>
             <LinearProgress variant="determinate" value={timer * 2} />
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography align='center' variant="h3" gutterBottom>
+            Start
+          </Typography>
+        </Grid><Grid item xs={4}>
+          <Typography align='center' variant="h3" gutterBottom>
+            Reset
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <Typography align='center' variant="h3" gutterBottom>
+            Stop
           </Typography>
         </Grid>
         <Grid item xs={2.4}>
@@ -122,6 +145,11 @@ function App() {
           />
         </Grid>
       </Grid>
+      {timer > 25  &&  
+      <Alert severity="success">
+        <AlertTitle>Success</AlertTitle>
+        This is a success alert — <strong>check it out!</strong>
+      </Alert>}
     </Box>
   );
 }
