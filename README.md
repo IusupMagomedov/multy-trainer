@@ -3,7 +3,7 @@ The react application created for memorizing multiplacation table
 
 ## Get started:
 The application deploed here:
-There will be the link
+https://iusupmagomedov.github.io/multy-trainer/
 
 Press START button to start memorizing
 
