@@ -7,11 +7,17 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Button from '@mui/material/Button';
-
-
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
 import './App.css';
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 
 
@@ -24,7 +30,7 @@ function App() {
   const [productValue, setProductValue ] = useState('');
   const [arrId, setArrId] = useState(0);
   const [answerAlert, setAnswerAlert] = useState('standby');
-  const [mode, setMode] = useState('start');
+  const [mode, setMode] = useState('standby');
   const textFieldRef = useRef(null);
 
 
@@ -34,11 +40,14 @@ function App() {
     setTimeout(() => {
       switch (mode) {
         case 'multiply':
-          if( timer > 0 ) {
+          if(answerAlert === 'right') {
+            setTimer(50);
+            setAnswerAlert('await');
+          } else if(timer > 0) {
             setTimer( timer - 1 );
           } else {
             setMode('time-is-over');
-            setAnswerAlert('time-is-over')
+            setAnswerAlert('time-is-over');
           }
           break;
         case 'standby':
@@ -63,7 +72,8 @@ function App() {
         })
       }  
     }
-    setMultArr(arr);
+    
+    setMultArr(shuffle(arr));
   }, [])
 
 
@@ -86,15 +96,15 @@ function App() {
     if (ev.key === 'Enter') {
       const array = multArr;
       if (productValue === (multiplier * multiplicand).toString()) {
-        console.log("You've entered right value!");
-        console.log("Array in keyHandler: ", array);
-        console.log("arrId in keyHandler: ", arrId);
+        // console.log("You've entered right value!");
+        // console.log("Array in keyHandler: ", array);
+        // console.log("arrId in keyHandler: ", arrId);
         array[arrId].solved = true;
         setArrId(arrId + 1);
         setAnswerAlert('right');
-        setTimer(50);
 
       } else {
+        setMode('wrong-answer')
         setAnswerAlert('wrong');
       }
       setMultArr(array);
@@ -110,12 +120,26 @@ function App() {
     switch (event.target.innerText) {
       case 'START':
         setMode('multiply');
+        setAnswerAlert('await');
+        setMultArr(multArr.map(element => {
+          element.solved = false;
+          return element
+        }));
         textFieldRef.current.focus();
         break;
       case 'RESET':
-        break;
-      case 'STOP':
         setMode('standby');
+        setAnswerAlert('standby');
+        setArrId(0);
+        setMultArr(shuffle(multArr));
+        break;
+      case 'SHOW':
+        setMode('show');
+        setAnswerAlert('standby');
+        break;
+      case 'CLOSE':
+        setMode('standby');
+        setAnswerAlert('standby');
         break;
       default:
         break;
@@ -128,27 +152,32 @@ function App() {
       case 'standby':
         return <Alert severity="info">
           <AlertTitle>Hey body!</AlertTitle>
-          Time to give it a <strong>try!</strong>
+          Time to give it a <strong>try!</strong> Press START button.
         </Alert>
       case 'right':
         return <Alert severity="success">
-          <AlertTitle>Success</AlertTitle>
-          The answer is <strong>correct!</strong>
+          <AlertTitle>Success!</AlertTitle>
+          The answer is <strong>correct!</strong> Keep going!
         </Alert>
       case 'wrong':
         return <Alert severity="error">
-          <AlertTitle>Success</AlertTitle>
-          The answer is <strong>wrong!</strong>
+          <AlertTitle>Sorry!</AlertTitle>
+          The answer is <strong>wrong!</strong> Please, try again! Press START button.
         </Alert>
       case 'time-is-over':
         return <Alert severity="warning">
-          <AlertTitle>Success</AlertTitle>
-          The time is <strong>over!</strong>
+          <AlertTitle>Sorry!</AlertTitle>
+          The time is <strong>over!</strong> Please, try again! Press START button.
         </Alert>
       default:
         break;
     }
   }
+
+  const shuffle = (array) => {
+    return array.sort(() => Math.random() - 0.5);
+  }
+  
   
 
   return (
@@ -158,9 +187,12 @@ function App() {
         <Grid item xs={12}>
           <Typography align='center' variant="h1" gutterBottom>
             Multiplication table trainer 
+            
           </Typography>
         </Grid><Grid item xs={12}>
           <Typography align='center' variant="h1" gutterBottom>
+            Mode: {mode} <br/>
+            AnswerAlert: {answerAlert}
             <LinearProgress variant="determinate" value={timer * 2} />
           </Typography>
         </Grid>
@@ -168,14 +200,15 @@ function App() {
           <Typography align='center' variant="h3" gutterBottom>
             <Button onClick={buttonHandler} variant="outlined">Start</Button>
           </Typography>
-        </Grid><Grid item xs={4}>
+        </Grid>
+        <Grid item xs={4}>
           <Typography align='center' variant="h3" gutterBottom>
             <Button onClick={buttonHandler} variant="outlined">Reset</Button>
           </Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography align='center' variant="h3" gutterBottom>
-            <Button onClick={buttonHandler} variant="outlined">Stop</Button>
+            <Button onClick={buttonHandler} variant="outlined">Show</Button>
           </Typography>
         </Grid>
         <Grid item xs={2.4}>
@@ -215,6 +248,24 @@ function App() {
       <AlertMessage 
         allertType={answerAlert}
       />
+      <Dialog
+        open={mode === 'show'}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={buttonHandler}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Use Google's location service?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            Let Google help apps determine location. This means sending anonymous
+            location data to Google, even when no apps are running.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={buttonHandler}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
