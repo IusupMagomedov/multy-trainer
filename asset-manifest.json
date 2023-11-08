@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.ba7bc7d0.css",
-    "main.js": "/static/js/main.5fcdcf45.js",
-    "index.html": "/index.html",
-    "main.ba7bc7d0.css.map": "/static/css/main.ba7bc7d0.css.map",
-    "main.5fcdcf45.js.map": "/static/js/main.5fcdcf45.js.map"
+    "main.css": "/multy-trainer/static/css/main.ba7bc7d0.css",
+    "main.js": "/multy-trainer/static/js/main.5fcdcf45.js",
+    "index.html": "/multy-trainer/index.html",
+    "main.ba7bc7d0.css.map": "/multy-trainer/static/css/main.ba7bc7d0.css.map",
+    "main.5fcdcf45.js.map": "/multy-trainer/static/js/main.5fcdcf45.js.map"
   },
   "entrypoints": [
     "static/css/main.ba7bc7d0.css",
